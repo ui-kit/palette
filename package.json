@@ -1,0 +1,21 @@
+{
+  "name": "ui-kit-palette",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
+  "author": "Michael Andrew Vanasse <mail@mndvns.com> (http://mndvns.com/)",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "should": "^8.3.0"
+  },
+  "dependencies": {
+    "immutable-color": "^0.1.3"
+  }
+}
