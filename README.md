@@ -24,6 +24,7 @@ var palette = new Palette({
   "blue": "hsla(150, 50%, 50%, 1)",
   "blue-dark": "hsla(150, 50%, 24.5%, 1)",
   "blue-light": "hsla(150, 50%, 100%, 1)",
+
   "red": "hsla(0, 50%, 50%, 1)",
   "red-dark": "hsla(0, 50%, 24.5%, 1)",
   "red-light": "hsla(0, 50%, 100%, 1)"
@@ -77,24 +78,28 @@ var palette = new Palette({
   "blue-faded": "hsla(240, 85.71%, 53.33%, 0.7)",
   "blue-faded-saturated": "hsla(240, 100%, 53.33%, 0.7)",
   "blue-faded-desaturated": "hsla(240, 60%, 53.33%, 0.7)",
+
   "blue2": "hsla(240, 85.71%, 53.33%, 1)",
   "blue2-gray": "hsla(0, 0%, 39.22%, 1)",
   "blue2-desaturated": "hsla(240, 20.58%, 53.33%, 1)",
   "blue2-faded": "hsla(240, 85.71%, 53.33%, 0.7)",
   "blue2-faded-saturated": "hsla(240, 100%, 53.33%, 0.7)",
   "blue2-faded-desaturated": "hsla(240, 60%, 53.33%, 0.7)",
+
   "blue3": "hsla(240, 85.71%, 26.13%, 1)",
   "blue3-gray": "hsla(0, 0%, 39.22%, 1)",
   "blue3-desaturated": "hsla(240, 20.58%, 26.13%, 1)",
   "blue3-faded": "hsla(240, 85.71%, 26.13%, 0.7)",
   "blue3-faded-saturated": "hsla(240, 100%, 26.13%, 0.7)",
   "blue3-faded-desaturated": "hsla(240, 60%, 26.13%, 0.7)",
+
   "red": "hsla(0, 100%, 50%, 1)",
   "red-gray": "hsla(0, 0%, 39.22%, 1)",
   "red-desaturated": "hsla(0, 24.01%, 50%, 1)",
   "red-faded": "hsla(0, 100%, 50%, 0.7)",
   "red-faded-saturated": "hsla(0, 100%, 50%, 0.7)",
   "red-faded-desaturated": "hsla(0, 70%, 50%, 0.7)",
+
   "red2": "hsla(0, 100%, 50%, 1)",
   "red2-gray": "hsla(0, 49%, 50%, 1)",
   "red2-desaturated": "hsla(0, 49%, 50%, 1)",
@@ -105,6 +110,7 @@ var palette = new Palette({
   "red2-bar": "hsla(0, 20%, 50%, 1)",
   "red2-baz": "hsla(0, 100%, 30%, 1)",
   "red2-qux": "hsla(0, 100%, 50%, 0.4)",
+
   "red3": "hsla(0, 100%, 50%, 1)",
   "red3-gray": "hsla(0, 0%, 39.22%, 1)",
   "red3-desaturated": "hsla(0, 24.01%, 50%, 1)",
@@ -157,11 +163,13 @@ var palette = new Palette({
   "blue-dark": "hsla(150, 100%, 35%, 1)",
   "blue-light": "hsla(150, 100%, 71.43%, 1)",
   "blue-light-clear": "hsla(150, 100%, 71.43%, 0.7)",
+
   "red": "hsla(0, 100%, 50%, 1)",
   "red-dark": "hsla(0, 100%, 35%, 1)",
   "red-light": "hsla(0, 100%, 71.43%, 1)",
   "red-light-clear": "hsla(0, 100%, 71.43%, 0.7)",
   "red-lighter": "hsla(0, 100%, 59.76%, 0.5)",
+
   "orange": "hsla(0, 100%, 50%, 1)",
   "orange-dark": "hsla(0, 100%, 35%, 1)",
   "orange-light": "hsla(0, 100%, 71.43%, 1)",
@@ -169,18 +177,22 @@ var palette = new Palette({
   "orange-redder": "hsla(0, 100%, 59.76%, 0.5)",
   "orange-redder-clearer": "hsla(0, 100%, 59.76%, 0.25)",
   "orange-redder-clearest": "hsla(0, 100%, 59.76%, 0.1)",
+
   "green": "hsla(120, 100%, 19.61%, 1)",
   "green-dark": "hsla(120, 100%, 13.73%, 1)",
   "green-light": "hsla(120, 100%, 28.01%, 1)",
   "green-light-clear": "hsla(120, 100%, 28.01%, 0.7)",
+
   "lime": "hsla(120, 50%, 19.61%, 1)",
   "lime-dark": "hsla(120, 50%, 13.73%, 1)",
   "lime-light": "hsla(120, 50%, 28.01%, 1)",
   "lime-light-clear": "hsla(120, 50%, 28.01%, 0.7)",
+
   "primary": "hsla(120, 50%, 19.61%, 1)",
   "primary-dark": "hsla(120, 50%, 13.73%, 1)",
   "primary-light": "hsla(120, 50%, 28.01%, 1)",
   "primary-light-clear": "hsla(120, 50%, 28.01%, 0.7)",
+
   "secondary": "hsla(120, 50%, 19.61%, 1)",
   "secondary-dark": "hsla(120, 50%, 13.73%, 1)",
   "secondary-light": "hsla(120, 50%, 28.01%, 1)",
@@ -190,7 +202,7 @@ var palette = new Palette({
 
 ## Output formats
 
-This library uses the `immutable-color` library to interpret and manipulate colors.
+This library uses the [`immutable-color`](https://github.com/css-utils/immutable-color) library to interpret and manipulate colors.
 These colors are stored and used for each color context.
 
 An instance of `Palette` still has the color instances accessible, so you can operate
