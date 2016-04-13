@@ -22,7 +22,7 @@ function Palette(colors){
 
   delete colors._;
   for (var key in colors) {
-    parseProp.call(this, [key], colors[key]);
+    parseProp.call(this, [key], colors[key], this, 0);
   }
 
   while (true) {
@@ -30,10 +30,6 @@ function Palette(colors){
     for (var k in this.deferred) {
       if (this.deferred[k]()) delete this.deferred[k];
     }
-  }
-
-  for (var k in this) {
-    if (this[k] && this[k].nested) delete this[k];
   }
 }
 Palette.prototype.toString = function() {
@@ -47,9 +43,6 @@ Palette.prototype.toSnakeCase = function() {
 };
 
 function parseProp(keychain, color, context, depth) {
-  depth = (depth || 0);
-  context = context || this;
-
   var keystring = keychain.join('-');
   var value;
   var subcolors;
@@ -99,10 +92,6 @@ function parseProp(keychain, color, context, depth) {
 
     this[keystring] = resolved;
     this.flat.add(keystring, resolved);
-
-    if (depth) Object.defineProperty(this[keystring], 'nested', {
-      value: true
-    });
 
     context = context[lastkey] = resolved;
 
