@@ -253,7 +253,7 @@ palette.toJSON();
   "red-light": "hsla(0, 100%, 100%, 1)",
   "blue": "hsla(240, 100%, 50%, 1)",
   "blue-light": "hsla(240, 100%, 100%, 1)"
-}`
+}`;
 ```
 
 You can still pass `print` options to the convenience methods.
@@ -265,7 +265,7 @@ palette.toString({keys: 'snake'});
   red_light: 'hsla(0, 100%, 100%, 1)',
   blue: 'hsla(240, 100%, 50%, 1)',
   blue_light: 'hsla(240, 100%, 100%, 1)'
-}
+};
 ```
 
 ## Notes
@@ -288,7 +288,7 @@ it as JSON), the following configuration's subcolors are pointless:
     lighter: '.lighter',
     lightest: '.lightest'
   }
-}
+};
 ```
 
 This is pointless because the defined subcolors return what they would return anyway.
@@ -297,7 +297,7 @@ In this case, we can remove the subcolors and still get the same output.
 ```javascript
 {
   red: 'red'
-}
+};
 ```
 
 ## License
