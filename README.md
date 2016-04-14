@@ -220,22 +220,53 @@ var palette = new Palette({
 palette.red.darken(5).toString() // -> 'hsla(0, 100%, 50%, 1)'
 ```
 
-The color values are stored in nested form on `palette`. Staying in our example,
-`palette['red-light']` does not exist; to access that color value, either do
+The color values are stored in nested form on `palette`. Use the `print` method
+to output various formats.
 
-    palette.red.light
+`print` takes a single argument, an object with the following properties:
 
-or
+* `keys` `{String}`: the color key format. Options: `string`, `raw`. Default: `string`
+* `values` `{String}`: the color value format. Options: `dash`, `camel`, `pascal`, `snake`. Default: `dash`
+* `json` `{Boolean}`: output a JSON string. Default: `false`
+* `flat` `{Boolean}`: include subcolors. Default: `true`
 
-    palette.flat['red-light']
+You can also use one of the other sugary convenience methods `toString` or `toJSON` as seen in the examples below.
 
-To emit the colors in a different key-delimited format, you can do
+```javascript
+palette.print({values: 'string'});
+// or
+palette.toString();
+{
+  red: 'hsla(0, 100%, 50%, 1)',
+  'red-light': 'hsla(0, 100%, 100%, 1)',
+  blue: 'hsla(240, 100%, 50%, 1)',
+  'blue-light': 'hsla(240, 100%, 100%, 1)'
+};
+```
 
-    palette.toCamelCase()
+```javascript
+palette.print({json: true});
+// or
+palette.toJSON();
+`{
+  "red": "hsla(0, 100%, 50%, 1)",
+  "red-light": "hsla(0, 100%, 100%, 1)",
+  "blue": "hsla(240, 100%, 50%, 1)",
+  "blue-light": "hsla(240, 100%, 100%, 1)"
+}`
+```
 
-or
+You can still pass `print` options to the convenience methods.
 
-    palette.toSnakeCase()
+```javascript
+palette.toString({keys: 'snake'});
+{
+  red: 'hsla(0, 100%, 50%, 1)',
+  red_light: 'hsla(0, 100%, 100%, 1)',
+  blue: 'hsla(240, 100%, 50%, 1)',
+  blue_light: 'hsla(240, 100%, 100%, 1)'
+}
+```
 
 ## Notes
 

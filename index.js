@@ -82,12 +82,6 @@ Palette.prototype.toString = function(opts) {
 Palette.prototype.toJSON = function(opts) {
   return this.print(Object.assign({}, opts, {json: true}));
 };
-Palette.prototype.toCamelCase = function(opts) {
-  return this.print(Object.assign({}, opts, {keys: 'camel'}));
-};
-Palette.prototype.toSnakeCase = function(opts) {
-  return this.print(Object.assign({}, opts, {keys: 'snake'}));
-};
 
 Palette.prototype.format = {
   validate: function (type, string) {
@@ -95,7 +89,8 @@ Palette.prototype.format = {
     var fn = fns[string];
     if (fn) return fn;
     var upper = type.charAt(0).toUpperCase() + type.slice(1);
-    throw new Error(upper + ' format \'' + string + '\' does not exit. Must be one of the following: ' + fns.join(', '));
+    var keys = Object.keys(fns).map(x => '\'' + x + '\'').join(', ');
+    throw new Error(upper + ' format \'' + string + '\' does not exit. Must be one of the following: ' + keys);
   },
 
   fns: {

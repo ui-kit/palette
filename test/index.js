@@ -86,7 +86,20 @@ describe('Palette', function() {
 
     log(palette.toString());
   });
+
+  it('simple', function() {
+    var palette = new Palette({
+      red: 'red',
+      blue: 'blue',
+      _: {
+        light: '.lightest'
+      }
+    });
+
+    log(palette.toString({keys: 'snake'}));
+  });
 });
+
 
 function log() {
   var opts = {color: true, depth: null};
