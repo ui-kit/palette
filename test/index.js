@@ -48,6 +48,7 @@ describe('Palette', function() {
   it('colors', function() {
     var palette = new Palette({
       _: {                          // default subcolors
+        light: 'hsla(222, 22%, 22%, .222)',
         gray: 'rgb(100, 100, 100)', // a literal color value
         desaturated: '.dampen(4)',  // an interpretted color value
         faded: ['.soften(1)', {       // nested subcolors, which will
@@ -69,13 +70,17 @@ describe('Palette', function() {
         baz: '.l(.3)',          // for this context as you like
         qux: '.a(.4)'
       }],
-      red3: ['@red', {
-        one: ['.dark', {
+      red3: ['@red.light', {
+        one: ['@orange.light', {
           two: ['.light', {             // go as deep as you want
             three: '.damp',
             four: '@red3.one.two.three'  // referencing still works
           }]
         }]
+      }],
+
+      orange: ['orange', {
+        light: 'hsla(111, 11%, 11%, .1111)'
       }]
     });
 

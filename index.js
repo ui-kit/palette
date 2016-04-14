@@ -32,14 +32,17 @@ function Palette(colors){
     }
   }
 }
-Palette.prototype.toString = function() {
-  return this.flat.toString();
+Palette.prototype.print = function(opts) {
+  return this.flat.print(opts);
 };
-Palette.prototype.toCamelCase = function() {
-  return this.flat.toCamelCase();
+Palette.prototype.toString = function(opts) {
+  return this.flat.toString(opts);
 };
-Palette.prototype.toSnakeCase = function() {
-  return this.flat.toSnakeCase();
+Palette.prototype.toCamelCase = function(opts) {
+  return this.flat.toCamelCase(opts);
+};
+Palette.prototype.toSnakeCase = function(opts) {
+  return this.flat.toSnakeCase(opts);
 };
 
 function parseProp(keychain, color, context, depth) {
@@ -64,7 +67,7 @@ function parseProp(keychain, color, context, depth) {
 
   if (first === DOT_CODE) {
     if (depth) {
-      resolved = evaluate(value, context);
+      resolved = evaluate(context, value);
     } else {
       throw new Error('Cannot use dot at root level');
     }
@@ -72,12 +75,13 @@ function parseProp(keychain, color, context, depth) {
   } else if (first === AT_CODE) {
     var parts = value.slice(1).split('.');
     var head = parts.shift();
+    var stored = this.flat.raw[head];
 
-    if (this[head]) {
+    if (stored) {
       if (parts.length) {
-        resolved = evaluate('.' + parts.join('.'), this[head]);
+        resolved = evaluate(stored, '.' + parts.join('.'));
       } else {
-        resolved = this[head];
+        resolved = stored;
       }
     } else {
       this.deferred[keystring] = parseProp.bind(this, keychain, color, context, depth);
@@ -103,7 +107,7 @@ function parseProp(keychain, color, context, depth) {
   }
 }
 
-function evaluate(str, context, tries) {
+function evaluate(context, str, tries) {
   tries = tries || 0;
 
   if (tries > 10) {
@@ -120,7 +124,7 @@ function evaluate(str, context, tries) {
     return '';
   });
 
-  if (str.length) return evaluate(str, context, ++tries);
+  if (str.length) return evaluate(context, str, ++tries);
 
   return context;
 }
@@ -134,8 +138,11 @@ Flat.prototype.add = function(key, value) {
   this[key] = value.toString();
   this.raw[key] = value;
 };
+Flat.prototype.print = function(opts) {
+  return this.to(null, opts);
+};
 Flat.prototype.toString = function(opts) {
-  return JSON.stringify(this.to(), null, '  ');
+  return JSON.stringify(this.print(opts), null, '  ');
 };
 Flat.prototype.toCamelCase = function(opts) {
   return this.to(toCamelCase, opts);
@@ -146,11 +153,13 @@ Flat.prototype.toSnakeCase = function(opts) {
 Flat.prototype.to = function(fn, opts) {
   fn = fn || (x => x);
   opts = opts || {};
+  var prefix = opts.prefix || '';
+  var suffix = opts.suffix || '';
   var raw = opts.raw;
   var buf = {};
   for (var k in this) {
     if (!this.hasOwnProperty(k)) continue;
-    buf[fn(k)] = (raw ? this.raw : this)[k];
+    buf[fn(prefix + k + suffix)] = (raw ? this.raw : this)[k];
   }
   return buf;
 };
