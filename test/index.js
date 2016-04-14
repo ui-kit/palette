@@ -47,34 +47,34 @@ describe('Palette', function() {
 
   it('colors', function() {
     var palette = new Palette({
-      _: {                          // default subcolors
+      _: {
         light: 'hsla(222, 22%, 22%, .222)',
-        gray: 'rgb(100, 100, 100)', // a literal color value
-        desaturated: '.dampen(4)',  // an interpretted color value
-        faded: ['.soften(1)', {       // nested subcolors, which will
-          saturated: '.brighten(1)',  // use `faded` as their naming context
-          desaturated: '.dampen(1)',  // and `.soften(1)` as their value context
+        gray: 'rgb(100, 100, 100)',
+        desaturated: '.dampen(4)',
+        faded: ['.soften(1)', {
+          saturated: '.brighten(1)',
+          desaturated: '.dampen(1)',
         }]
       },
 
-      blue: '#22e',   // another literal color
-      blue2: '@blue', // a reference to use the `blue` value defined above
-      blue3: '@blue.darken(2)',  // references are also interpretted
+      blue: '#22e',
+      blue2: '@blue',
+      blue3: '@blue.darken(2)',
 
-      red: ['red'],  // a literal in an array with no subcolors is technically allowed
+      red: ['red'],
       red2: ['@red', {
-        gray: '.dampen(2)',        // these overrides the `gray`
-        desaturated: '.dampen(2)', // and `desaturated` subcolors in this context
+        gray: '.dampen(2)',
+        desaturated: '.dampen(2)',
         foo: '.h(1)',
-        bar: '.s(.2)',          // you can add as many additional subcolors
-        baz: '.l(.3)',          // for this context as you like
+        bar: '.s(.2)',
+        baz: '.l(.3)',
         qux: '.a(.4)'
       }],
       red3: ['@red.light', {
         one: ['@orange.light', {
-          two: ['.light', {             // go as deep as you want
+          two: ['.light', {
             three: '.damp',
-            four: '@red3.one.two.three'  // referencing still works
+            four: '@red3.one.two.three'
           }]
         }]
       }],

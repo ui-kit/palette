@@ -1,19 +1,36 @@
+/**
+ * Module dependencies
+ */
+
 var Color = require('immutable-color');
 
-module.exports = Palette;
-module.exports['default'] = Palette;
+/**
+ * Character codes
+ */
 
 var DOT_CODE = '.'.charCodeAt(0);
 var AT_CODE = '@'.charCodeAt(0);
 
+/**
+ * Define and expose `Palette`
+ */
+
+module.exports = Palette;
+module.exports['default'] = Palette;
+
+/**
+ * Instantiates a palette based on `colors` configuration object
+ * @param {Object} colors
+ */
 function Palette(colors){
   Object.defineProperties(this, {
-    deferred: {
+    flat: {
       value: {},
       writable: true
     },
-    flat: {
-      value: new Flat()
+    deferred: {
+      value: {},
+      writable: true
     },
     subcolors: {
       value: colors._
@@ -22,7 +39,7 @@ function Palette(colors){
 
   delete colors._;
   for (var key in colors) {
-    parseProp.call(this, [key], colors[key], this, 0);
+    parseProp.call(this, [key], colors[key], this, true);
   }
 
   while (true) {
@@ -32,20 +49,70 @@ function Palette(colors){
     }
   }
 }
+
+/**
+ * @param {Object} opts
+ */
 Palette.prototype.print = function(opts) {
-  return this.flat.print(opts);
-};
-Palette.prototype.toString = function(opts) {
-  return this.flat.toString(opts);
-};
-Palette.prototype.toCamelCase = function(opts) {
-  return this.flat.toCamelCase(opts);
-};
-Palette.prototype.toSnakeCase = function(opts) {
-  return this.flat.toSnakeCase(opts);
+  opts = opts || {};
+
+  var context = this;
+  if (typeof opts.flat === 'undefined' ? true : !!opts.flat) context = context.flat;
+
+  var keyFn = this.format.validate('key', opts.keys || 'dash');
+  var valueFn = this.format.validate('value', opts.json ? 'string' : opts.values || 'raw');
+
+  var prefix = opts.prefix || '';
+  var suffix = opts.suffix || '';
+
+  var buf = {}, key, val;
+  for (var k in context) {
+    if (!context.hasOwnProperty(k)) continue;
+    key = keyFn(prefix + k + suffix);
+    val = valueFn(context[k]);
+    buf[key] = val;
+  }
+
+  return opts.json ? JSON.stringify(buf, null, '  ') : buf;
 };
 
-function parseProp(keychain, color, context, depth) {
+Palette.prototype.toString = function(opts) {
+  return this.print(Object.assign({}, opts, {values: 'string'}));
+};
+Palette.prototype.toJSON = function(opts) {
+  return this.print(Object.assign({}, opts, {json: true}));
+};
+Palette.prototype.toCamelCase = function(opts) {
+  return this.print(Object.assign({}, opts, {keys: 'camel'}));
+};
+Palette.prototype.toSnakeCase = function(opts) {
+  return this.print(Object.assign({}, opts, {keys: 'snake'}));
+};
+
+Palette.prototype.format = {
+  validate: function (type, string) {
+    var fns = this.fns[type];
+    var fn = fns[string];
+    if (fn) return fn;
+    var upper = type.charAt(0).toUpperCase() + type.slice(1);
+    throw new Error(upper + ' format \'' + string + '\' does not exit. Must be one of the following: ' + fns.join(', '));
+  },
+
+  fns: {
+    key: {
+      camel: (str => str.replace(/-(\w)/g, (m, p1) => p1.toUpperCase())),
+      pascal: (str => str.replace(/(\w)(\w*)-?/g, (m, p1, p2) => p1.toUpperCase() + p2)),
+      snake: (str => str.replace(/-/g, '_')),
+      dash: (x => x)
+    },
+    value: {
+      string: (x => x.toString()),
+      raw: (x => x)
+    }
+  }
+};
+
+function parseProp(keychain, color, context, isRoot) {
   var keystring = keychain.join('-');
   var value;
   var subcolors;
@@ -58,24 +125,18 @@ function parseProp(keychain, color, context, depth) {
     subcolors = color[1];
   }
 
-  if (!depth) {
-    subcolors = Object.assign({}, this.subcolors, subcolors);
-  }
+  if (isRoot) subcolors = Object.assign({}, this.subcolors, subcolors);
 
   var resolved;
   var first = value.charCodeAt(0);
 
   if (first === DOT_CODE) {
-    if (depth) {
-      resolved = evaluate(context, value);
-    } else {
-      throw new Error('Cannot use dot at root level');
-    }
-
+    if (isRoot) throw new Error('Cannot use dot at root level');
+    resolved = evaluate(context, value);
   } else if (first === AT_CODE) {
     var parts = value.slice(1).split('.');
     var head = parts.shift();
-    var stored = this.flat.raw[head];
+    var stored = this.flat[head];
 
     if (stored) {
       if (parts.length) {
@@ -84,27 +145,27 @@ function parseProp(keychain, color, context, depth) {
         resolved = stored;
       }
     } else {
-      this.deferred[keystring] = parseProp.bind(this, keychain, color, context, depth);
+      this.deferred[keystring] = parseProp.bind(this, keychain, color, context, isRoot);
     }
 
   } else {
     resolved = new Color(value, {mutable: true});
   }
 
-  if (resolved) {
-    var lastkey = keychain[keychain.length - 1];
+  if (!resolved) return;
 
-    this[keystring] = resolved;
-    this.flat.add(keystring, resolved);
+  var lastkey = keychain[keychain.length - 1];
 
-    context = context[lastkey] = resolved;
+  if (isRoot) this[keystring] = resolved;
 
-    for (var subkey in subcolors) {
-      context[subkey] = parseProp.call(this, keychain.concat(subkey), subcolors[subkey], context, depth + 1);
-    }
+  this.flat[keystring] = resolved;
+  context = context[lastkey] = resolved;
 
-    return context;
+  for (var subkey in subcolors) {
+    context[subkey] = parseProp.call(this, keychain.concat(subkey), subcolors[subkey], context, false);
   }
+
+  return context;
 }
 
 function evaluate(context, str, tries) {
@@ -127,46 +188,4 @@ function evaluate(context, str, tries) {
   if (str.length) return evaluate(context, str, ++tries);
 
   return context;
-}
-
-function Flat() {}
-Object.defineProperty(Flat.prototype, 'raw', {
-  value: {},
-  writable: true
-});
-Flat.prototype.add = function(key, value) {
-  this[key] = value.toString();
-  this.raw[key] = value;
-};
-Flat.prototype.print = function(opts) {
-  return this.to(null, opts);
-};
-Flat.prototype.toString = function(opts) {
-  return JSON.stringify(this.print(opts), null, '  ');
-};
-Flat.prototype.toCamelCase = function(opts) {
-  return this.to(toCamelCase, opts);
-};
-Flat.prototype.toSnakeCase = function(opts) {
-  return this.to(toSnakeCase, opts);
-};
-Flat.prototype.to = function(fn, opts) {
-  fn = fn || (x => x);
-  opts = opts || {};
-  var prefix = opts.prefix || '';
-  var suffix = opts.suffix || '';
-  var raw = opts.raw;
-  var buf = {};
-  for (var k in this) {
-    if (!this.hasOwnProperty(k)) continue;
-    buf[fn(prefix + k + suffix)] = (raw ? this.raw : this)[k];
-  }
-  return buf;
-};
-
-function toSnakeCase(str) {
-  return str.replace(/-/g, '_');
-}
-function toCamelCase(str) {
-  return str.replace(/-([a-z])/g, (m, p1) => p1.toUpperCase());
 }
