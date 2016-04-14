@@ -34,10 +34,14 @@ function Palette(colors){
     },
     subcolors: {
       value: colors._
+    },
+    colors: {
+      value: Object.assign({}, colors)
     }
   });
 
   delete colors._;
+
   for (var key in colors) {
     parseProp.call(this, [key], colors[key], this, true);
   }
@@ -49,6 +53,53 @@ function Palette(colors){
     }
   }
 }
+
+/**
+ * Extend the colors in current palette and return new palette
+ * @param {Object} colors
+ */
+Palette.prototype.extend = function(colors, context) {
+  var buf = Object.assign({}, context || this.colors);
+
+  for (var k in colors) {
+    var color = colors[k];
+
+    if (!color) continue;
+
+    if (!buf[k] || typeof color === 'string') {
+      buf[k] = color;
+      continue;
+    }
+
+    if (k === '_') {
+      buf[k] = this.extend(color, buf[k]);
+      continue;
+    }
+
+    if (typeof buf[k] === 'string') {
+      buf[k] = [buf[k], {}];
+    }
+
+    if (typeof color === 'string') {
+      buf[k][0] = color;
+      continue;
+    }
+
+    if (Array.isArray(color)) {
+      buf[k][0] = color[0] || buf[k][0];
+    } else {
+      color = [null, color];
+    }
+
+    if (color[1]) {
+      buf[k][1] = Object.assign({}, buf[k][1], color[1]);
+    }
+  }
+
+  if (context) return buf;
+
+  return new Palette(buf);
+};
 
 /**
  * @param {Object} opts
@@ -174,8 +225,18 @@ function evaluate(context, str, tries) {
     context = new Color(context, {mutable: true});
   }
 
-  str = str.replace(/^\.([\w]*)(\([\.0-9]*\))?/gm, function(m, p1, p2, p3) {
-    if (p1 && p2) context = context[p1](p2.slice(1, -1));
+  str = str.replace(/^\.([\w]*)(\(-?[\.0-9]*\))?/gm, function(m, p1, p2, p3) {
+    if (p1 && p2) {
+      if (context[p1] && context[p1] instanceof Color) {
+        var prefix = p1.replace(/(er|est)$/);
+        throw new Error(`'${p1}' is a getter. Do not call it like a function. Try '${prefix}en' instead.`);
+      }
+      if (typeof context[p1] !== 'function') {
+        var funcs = Object.keys(Color.prototype).map(x => `'${x}'`).join(', ');
+        throw new Error(`'${p1}' is is not a function. Try one of the following: ${funcs}`);
+      }
+      context = context[p1](p2.slice(1, -1));
+    }
     else if (p1) context = context[p1];
     return '';
   });

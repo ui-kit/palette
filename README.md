@@ -124,79 +124,58 @@ var palette = new Palette({
 }
 ```
 
-### Unrealistic kitchen sink
+## Extending
+
+Use the `extend` method to build on an existing palette. This method does not mutate the original palette.
 
 ```javascript
-var Palette = require('ui-kit-palette');
-
 var palette = new Palette({
-  blue: 'hsl(150, 100%, 50%)',
-  red: ['red', {
-    lighter: '.lighten(.5).a(.5)'
-  }],
-  orange: ['@red', {
-    redder: ['@red.lighter', {
-      clearer: '@red.lighter.a(.25)',
-      clearest: '@orange.redder.clearer.a(.1)'
-    }]
-  }],
-  lime: '@green.light.dark.s(.5)',
-  green: 'rgb(0, 100, 0)',
-  primary: '@lime',
-  secondary: ['@primary', {
-    dark: '@primary.dark'
-  }],
+  red: 'red',
+  blue: 'blue',
   _: {
-    dark: '.dark',
-    light: ['.light', {
-      clear: '.soft'
-    }]
+    light: '.light',
+    lighter: '.lighter',
+    lightest: '.lightest',
+    dark: '.dark'
+  }
+});
+
+var newPalette = palette.extend({
+  red: {
+    light: 'purple'
   },
+  _: {
+    light: 'orange',
+    lighter: ['.lighter', {
+      hard: '.soften(-1)'
+    }],
+    lightest: {
+      soft: '.soft'
+    },
+    dark: [null]
+  }
 });
 ```
 
-`palette.toString()` yields
+`newPalette.toString()` yields
 
-```json
+```javascript
 {
-  "blue": "hsla(150, 100%, 50%, 1)",
-  "blue-dark": "hsla(150, 100%, 35%, 1)",
-  "blue-light": "hsla(150, 100%, 71.43%, 1)",
-  "blue-light-clear": "hsla(150, 100%, 71.43%, 0.7)",
-
   "red": "hsla(0, 100%, 50%, 1)",
+  "red-light": "hsla(300, 100%, 25.1%, 1)",
+  "red-lighter": "hsla(0, 100%, 100%, 1)",
+  "red-lighter-hard": "hsla(0, 100%, 100%, 1)",
+  "red-lightest": "hsla(0, 100%, 100%, 1)",
+  "red-lightest-soft": "hsla(0, 100%, 100%, 0.7)",
   "red-dark": "hsla(0, 100%, 35%, 1)",
-  "red-light": "hsla(0, 100%, 71.43%, 1)",
-  "red-light-clear": "hsla(0, 100%, 71.43%, 0.7)",
-  "red-lighter": "hsla(0, 100%, 59.76%, 0.5)",
 
-  "orange": "hsla(0, 100%, 50%, 1)",
-  "orange-dark": "hsla(0, 100%, 35%, 1)",
-  "orange-light": "hsla(0, 100%, 71.43%, 1)",
-  "orange-light-clear": "hsla(0, 100%, 71.43%, 0.7)",
-  "orange-redder": "hsla(0, 100%, 59.76%, 0.5)",
-  "orange-redder-clearer": "hsla(0, 100%, 59.76%, 0.25)",
-  "orange-redder-clearest": "hsla(0, 100%, 59.76%, 0.1)",
-
-  "green": "hsla(120, 100%, 19.61%, 1)",
-  "green-dark": "hsla(120, 100%, 13.73%, 1)",
-  "green-light": "hsla(120, 100%, 28.01%, 1)",
-  "green-light-clear": "hsla(120, 100%, 28.01%, 0.7)",
-
-  "lime": "hsla(120, 50%, 19.61%, 1)",
-  "lime-dark": "hsla(120, 50%, 13.73%, 1)",
-  "lime-light": "hsla(120, 50%, 28.01%, 1)",
-  "lime-light-clear": "hsla(120, 50%, 28.01%, 0.7)",
-
-  "primary": "hsla(120, 50%, 19.61%, 1)",
-  "primary-dark": "hsla(120, 50%, 13.73%, 1)",
-  "primary-light": "hsla(120, 50%, 28.01%, 1)",
-  "primary-light-clear": "hsla(120, 50%, 28.01%, 0.7)",
-
-  "secondary": "hsla(120, 50%, 19.61%, 1)",
-  "secondary-dark": "hsla(120, 50%, 13.73%, 1)",
-  "secondary-light": "hsla(120, 50%, 28.01%, 1)",
-  "secondary-light-clear": "hsla(120, 50%, 28.01%, 0.7)"
+  "blue": "hsla(240, 100%, 50%, 1)",
+  "blue-light": "hsla(38.82352941176471, 100%, 50%, 1)",
+  "blue-lighter": "hsla(240, 100%, 100%, 1)",
+  "blue-lighter-hard": "hsla(240, 100%, 100%, 1)",
+  "blue-lightest": "hsla(240, 100%, 100%, 1)",
+  "blue-lightest-soft": "hsla(240, 100%, 100%, 0.7)",
+  "blue-dark": "hsla(240, 100%, 35%, 1)"
 }
 ```
 
@@ -217,7 +196,7 @@ var palette = new Palette({
   }
 });
 
-palette.red.darken(5).toString() // -> 'hsla(0, 100%, 50%, 1)'
+palette.red.darken(5).toString() // -> 'hsla(0, 100%, 8.4%, 1)'
 ```
 
 The color values are stored in nested form on `palette`. Use the `print` method

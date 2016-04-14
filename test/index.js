@@ -3,7 +3,7 @@ var Palette = require('..');
 var inspect = require('util').inspect;
 
 describe('Palette', function() {
-  it('basic', function() {
+  it('should handle basic configs', function() {
     var palette = new Palette({
       blue: 'hsla(150, 50%, 50%, 1)',
       red: 'hsla(0, 50%, 50%, 1)',
@@ -13,10 +13,10 @@ describe('Palette', function() {
       }
     });
 
-    log(palette.toString());
+    log(palette.toJSON());
   });
 
-  it('reference', function() {
+  it('should handle references, getters, and methods', function() {
     var palette = new Palette({
       _: {
         dark: '.dark',
@@ -42,10 +42,10 @@ describe('Palette', function() {
       }]
     });
 
-    log(palette.toString());
+    log(palette.toJSON());
   });
 
-  it('colors', function() {
+  it('should handle complex configs', function() {
     var palette = new Palette({
       _: {
         light: 'hsla(222, 22%, 22%, .222)',
@@ -84,10 +84,10 @@ describe('Palette', function() {
       }]
     });
 
-    log(palette.toString());
+    log(palette.toJSON());
   });
 
-  it('simple', function() {
+  it('should format keys', function() {
     var palette = new Palette({
       red: 'red',
       blue: 'blue',
@@ -96,10 +96,42 @@ describe('Palette', function() {
       }
     });
 
-    log(palette.toString({keys: 'snake'}));
+    log(palette.toJSON({keys: 'dash'}));
+    log(palette.toJSON({keys: 'snake'}));
+    log(palette.toJSON({keys: 'pascal'}));
+    log(palette.toJSON({keys: 'camel'}));
+  });
+
+  it('should extend', function() {
+    var palette = new Palette({
+      red: 'red',
+      blue: 'blue',
+      _: {
+        light: '.light',
+        lighter: '.lighter',
+        lightest: '.lightest',
+        dark: '.dark',
+        darker: '.darker'
+      }
+    });
+
+    log(palette.extend({
+      red: {
+        light: 'purple'
+      },
+      _: {
+        light: 'orange',
+        lighter: ['.lighter', {
+          hard: '.soften(-1)'
+        }],
+        lightest: {
+          soft: '.soft'
+        },
+        dark: [null]
+      }
+    }).toJSON());
   });
 });
-
 
 function log() {
   var opts = {color: true, depth: null};
