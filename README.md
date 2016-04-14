@@ -2,6 +2,12 @@
 
 Create precise, flexible color palettes with minimal effort.
 
+## Installation
+
+```sh
+npm i ui-kit-palette
+```
+
 ## Examples
 
 ### Basic
